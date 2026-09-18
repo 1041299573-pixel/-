@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,146 +10,134 @@
 <style>
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html,
 body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #111;
-  font-family: Arial, sans-serif;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #111;
+    font-family: Arial, sans-serif;
 }
 
-/* ==============================
-   摄像头
-   ============================== */
+
+/* 摄像头 */
 
 #video {
-  position: fixed;
-  inset: 0;
+    position: fixed;
+    inset: 0;
 
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 
-  object-fit: cover;
+    object-fit: cover;
 
-  transform: scaleX(-1);
+    transform: scaleX(-1);
 
-  z-index: 1;
+    z-index: 1;
 }
 
-/* ==============================
-   P1 / P2
-   ============================== */
+
+/* P1 / P2 */
 
 .character {
-  position: fixed;
+    position: fixed;
 
-  left: 50%;
-  top: 50%;
+    left: 50%;
+    top: 50%;
 
-  width: 800px;
-  height: 800px;
+    width: 800px;
+    height: 800px;
 
-  object-fit: contain;
+    object-fit: contain;
 
-  transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
-  pointer-events: none;
-  user-select: none;
+    pointer-events: none;
 
-  z-index: 10;
+    z-index: 10;
 
-  display: none;
-
-  will-change: left, top;
+    display: none;
 }
 
-/* ==============================
-   王冠 P3
 
-   注意：
-   现在不再固定屏幕中央。
-   JS 会实时控制位置和大小。
-   ============================== */
+/* 王冠 */
 
 #crown {
-  position: fixed;
+    position: fixed;
 
-  left: 50%;
-  top: 20%;
+    left: 0;
+    top: 0;
 
-  width: 300px;
-  height: auto;
+    width: 200px;
+    height: auto;
 
-  transform: translate(-50%, -50%);
+    transform: translate(-50%, -82%);
 
-  transform-origin: center center;
+    transform-origin: center bottom;
 
-  pointer-events: none;
-  user-select: none;
+    pointer-events: none;
 
-  z-index: 30;
+    z-index: 25;
 
-  display: block;
+    display: none;
 
-  will-change: left, top, width;
+    will-change: left, top, width, transform;
 }
 
-/* ==============================
-   烟花
-   ============================== */
+
+/* 烟花 */
 
 #fireworks {
-  position: fixed;
-  inset: 0;
+    position: fixed;
+    inset: 0;
 
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 
-  pointer-events: none;
+    pointer-events: none;
 
-  z-index: 20;
+    z-index: 20;
 }
 
-/* ==============================
-   状态
-   ============================== */
+
+/* 状态 */
 
 #status {
-  position: fixed;
+    position: fixed;
 
-  left: 50%;
-  bottom: 25px;
+    left: 50%;
+    bottom: 25px;
 
-  transform: translateX(-50%);
+    transform: translateX(-50%);
 
-  padding: 10px 18px;
+    padding: 10px 18px;
 
-  color: white;
+    color: white;
 
-  background: rgba(0,0,0,.68);
+    background: rgba(0,0,0,.68);
 
-  border-radius: 999px;
+    border-radius: 999px;
 
-  font-size: 15px;
+    font-size: 15px;
 
-  z-index: 100;
+    z-index: 100;
 
-  pointer-events: none;
+    pointer-events: none;
 
-  white-space: nowrap;
+    white-space: nowrap;
 }
+
 
 @media (max-width:700px) {
 
-  .character {
-    width: 560px;
-    height: 560px;
-  }
+    .character {
+        width: 560px;
+        height: 560px;
+    }
 
 }
 
@@ -159,109 +148,87 @@ body {
 <body>
 
 
-<!-- 摄像头 -->
-
 <video
-  id="video"
-  autoplay
-  playsinline
-  muted>
+    id="video"
+    autoplay
+    playsinline
+    muted>
 </video>
 
 
-<!-- P1 / P2 -->
+<img
+    id="character1"
+    class="character"
+    src="p1.png">
+
 
 <img
-  id="character1"
-  class="character"
-  src="p1.png">
+    id="character2"
+    class="character"
+    src="p1.png">
+
 
 <img
-  id="character2"
-  class="character"
-  src="p1.png">
+    id="crown"
+    src="https://1041299573-pixel.github.io/-/p3.png">
 
-
-<!-- 王冠 -->
-
-<img
-  id="crown"
-  src="https://1041299573-pixel.github.io/-/p3.png">
-
-
-<!-- 烟花 -->
 
 <canvas id="fireworks"></canvas>
 
 
-<!-- 背景音乐 -->
-
 <audio
-  id="bgMusic"
-  src="https://1041299573-pixel.github.io/-/firework.mp3"
-  preload="auto"
-  loop
-  playsinline>
+    id="bgMusic"
+    src="https://1041299573-pixel.github.io/-/firework.mp3"
+    preload="auto"
+    loop
+    playsinline>
 </audio>
 
 
 <div id="status">
-  👋 请把手放进摄像头
+    👋 请把手放进摄像头
 </div>
 
 
-<!-- ==============================
-     MediaPipe Hands
-     ============================== -->
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-
-
-<!-- ==============================
-     MediaPipe Face Detection
-
-     专门负责让王冠跟头
-     ============================== -->
-
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
 
 
 <script>
 
-/* =====================================================
+/* ==================================================
    DOM
-   ===================================================== */
+   ================================================== */
 
 const video =
-  document.getElementById("video");
+    document.getElementById("video");
 
 const character1 =
-  document.getElementById("character1");
+    document.getElementById("character1");
 
 const character2 =
-  document.getElementById("character2");
+    document.getElementById("character2");
 
 const crown =
-  document.getElementById("crown");
-
-const status =
-  document.getElementById("status");
+    document.getElementById("crown");
 
 const canvas =
-  document.getElementById("fireworks");
+    document.getElementById("fireworks");
 
 const ctx =
-  canvas.getContext("2d");
+    canvas.getContext("2d");
+
+const status =
+    document.getElementById("status");
 
 const bgMusic =
-  document.getElementById("bgMusic");
+    document.getElementById("bgMusic");
 
 
-/* =====================================================
-   背景音乐
-   ===================================================== */
+/* ==================================================
+   音乐
+   ================================================== */
 
 bgMusic.volume = 0.8;
 
@@ -270,303 +237,435 @@ let musicStarted = false;
 
 async function startMusic() {
 
-  if (musicStarted) return;
+    if (musicStarted) return;
 
-  try {
+    try {
 
-    await bgMusic.play();
+        await bgMusic.play();
 
-    musicStarted = true;
+        musicStarted = true;
 
-  }
+    }
 
-  catch(e) {
+    catch(e) {
 
-    console.log("等待用户操作后播放音乐");
+        console.log("等待用户操作后播放音乐");
 
-  }
+    }
 
 }
 
 
 window.addEventListener(
-  "load",
-  startMusic
+    "load",
+    startMusic
 );
 
 document.addEventListener(
-  "pointerdown",
-  startMusic
+    "pointerdown",
+    startMusic
 );
 
 document.addEventListener(
-  "touchstart",
-  startMusic,
-  { passive:true }
+    "click",
+    startMusic
 );
 
 document.addEventListener(
-  "keydown",
-  startMusic
+    "keydown",
+    startMusic
 );
 
-window.addEventListener(
-  "focus",
-  startMusic
+document.addEventListener(
+    "touchstart",
+    startMusic,
+    { passive:true }
 );
 
 startMusic();
 
 
-/* =====================================================
+/* ==================================================
    Canvas
-   ===================================================== */
+   ================================================== */
 
 function resizeCanvas() {
 
-  canvas.width =
-    window.innerWidth;
+    canvas.width =
+        window.innerWidth;
 
-  canvas.height =
-    window.innerHeight;
+    canvas.height =
+        window.innerHeight;
 
 }
 
 resizeCanvas();
 
 window.addEventListener(
-  "resize",
-  resizeCanvas
+    "resize",
+    resizeCanvas
 );
 
 
-/* =====================================================
-   王冠跟随头部
-   ===================================================== */
+/* ==================================================
+   摄像头坐标转换
+   ================================================== */
+
+function normalizedToScreen(x, y) {
+
+    const vw =
+        video.videoWidth || 1280;
+
+    const vh =
+        video.videoHeight || 720;
 
 
-/*
-   当前王冠的位置。
+    const sw =
+        window.innerWidth;
 
-   使用平滑移动，
-   避免检测产生抖动。
-*/
-
-let crownX =
-  window.innerWidth / 2;
-
-let crownY =
-  window.innerHeight * 0.2;
-
-let crownWidth =
-  300;
+    const sh =
+        window.innerHeight;
 
 
-/*
-   平滑程度
+    const scale =
+        Math.max(
+            sw / vw,
+            sh / vh
+        );
 
-   越小越稳
-   越大跟得越快
-*/
+
+    const realWidth =
+        vw * scale;
+
+    const realHeight =
+        vh * scale;
+
+
+    const cropX =
+        (realWidth - sw) / 2;
+
+    const cropY =
+        (realHeight - sh) / 2;
+
+
+    const screenX =
+        (1 - x) *
+        realWidth -
+        cropX;
+
+
+    const screenY =
+        y *
+        realHeight -
+        cropY;
+
+
+    return {
+
+        x: screenX,
+        y: screenY
+
+    };
+
+}
+
+
+/* ==================================================
+   王冠追踪
+   ================================================== */
+
+let crownX = 0;
+
+let crownY = 0;
+
+let crownSize = 200;
+
+let crownAngle = 0;
+
+let crownReady = false;
+
 
 const CROWN_SMOOTH =
-  0.22;
+    0.42;
 
 
-/*
-   创建 Face Detection
-*/
+/* ==================================================
+   Face Mesh
+   ================================================== */
 
-const faceDetection =
-  new FaceDetection({
+const faceMesh =
+    new FaceMesh({
 
-    locateFile: (file) =>
+        locateFile: (file) => {
 
-      "https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/" +
-      file
+            return (
 
-  });
+                "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/" +
+                file
+
+            );
+
+        }
+
+    });
 
 
-faceDetection.setOptions({
+faceMesh.setOptions({
 
-  model: "short",
+    maxNumFaces: 1,
 
-  minDetectionConfidence:
-    0.55
+    refineLandmarks: false,
+
+    minDetectionConfidence:
+        0.55,
+
+    minTrackingConfidence:
+        0.55
 
 });
 
 
-/*
-   获取脸部结果
-*/
-
-faceDetection.onResults(
-  (results) => {
+faceMesh.onResults(
+    (results) => {
 
 
-    if (
-      !results.detections ||
-      results.detections.length === 0
-    ) {
+        if (
+            !results.multiFaceLandmarks ||
+            results.multiFaceLandmarks.length === 0
+        ) {
 
-      /*
-        没检测到脸的时候，
-        不隐藏王冠。
+            crown.style.display =
+                "none";
 
-        保持在最后一次检测的位置。
-      */
+            crownReady =
+                false;
 
-      return;
+            return;
+
+        }
+
+
+        const face =
+            results.multiFaceLandmarks[0];
+
+
+        const forehead =
+            face[10];
+
+        const leftSide =
+            face[234];
+
+        const rightSide =
+            face[454];
+
+        const leftEye =
+            face[33];
+
+        const rightEye =
+            face[263];
+
+
+        const foreheadScreen =
+            normalizedToScreen(
+                forehead.x,
+                forehead.y
+            );
+
+
+        const leftScreen =
+            normalizedToScreen(
+                leftSide.x,
+                leftSide.y
+            );
+
+
+        const rightScreen =
+            normalizedToScreen(
+                rightSide.x,
+                rightSide.y
+            );
+
+
+        const leftEyeScreen =
+            normalizedToScreen(
+                leftEye.x,
+                leftEye.y
+            );
+
+
+        const rightEyeScreen =
+            normalizedToScreen(
+                rightEye.x,
+                rightEye.y
+            );
+
+
+        const headWidth =
+            Math.hypot(
+
+                rightScreen.x -
+                leftScreen.x,
+
+                rightScreen.y -
+                leftScreen.y
+
+            );
+
+
+        /* ==========================================
+           王冠位置
+
+           这里只改了这一处：
+
+           原来王冠太低。
+           现在直接向上移动很多。
+
+           0.38 越大越往上。
+           ========================================== */
+
+        const targetX =
+            foreheadScreen.x;
+
+
+        const targetY =
+            foreheadScreen.y -
+            headWidth * 0.38;
+
+
+        /* ==========================================
+           王冠大小
+
+           保持之前逻辑
+           ========================================== */
+
+        let targetSize =
+            headWidth * 1.45;
+
+
+        targetSize =
+            Math.max(
+                120,
+                Math.min(
+                    targetSize,
+                    520
+                )
+            );
+
+
+        /* ==========================================
+           跟随头部角度
+           ========================================== */
+
+        const targetAngle =
+            Math.atan2(
+
+                rightEyeScreen.y -
+                leftEyeScreen.y,
+
+                rightEyeScreen.x -
+                leftEyeScreen.x
+
+            ) *
+            180 /
+            Math.PI;
+
+
+        if (!crownReady) {
+
+            crownX =
+                targetX;
+
+            crownY =
+                targetY;
+
+            crownSize =
+                targetSize;
+
+            crownAngle =
+                targetAngle;
+
+            crownReady =
+                true;
+
+        }
+
+        else {
+
+            crownX +=
+                (
+                    targetX -
+                    crownX
+                ) *
+                CROWN_SMOOTH;
+
+
+            crownY +=
+                (
+                    targetY -
+                    crownY
+                ) *
+                CROWN_SMOOTH;
+
+
+            crownSize +=
+                (
+                    targetSize -
+                    crownSize
+                ) *
+                CROWN_SMOOTH;
+
+
+            crownAngle +=
+                (
+                    targetAngle -
+                    crownAngle
+                ) *
+                0.30;
+
+        }
+
+
+        crown.style.display =
+            "block";
+
+
+        crown.style.left =
+            crownX + "px";
+
+
+        crown.style.top =
+            crownY + "px";
+
+
+        crown.style.width =
+            crownSize + "px";
+
+
+        crown.style.transform =
+            "translate(-50%, -82%) rotate(" +
+            crownAngle +
+            "deg)";
 
     }
-
-
-    const detection =
-      results.detections[0];
-
-
-    const box =
-      detection.boundingBox;
-
-
-    /*
-       MediaPipe 坐标是 0～1。
-
-       摄像头被镜像了，
-       所以 X 需要反转。
-    */
-
-    const faceCenterX =
-      1 - box.xCenter;
-
-    const faceCenterY =
-      box.yCenter;
-
-
-    /*
-       脸部尺寸
-    */
-
-    const faceWidth =
-      box.width;
-
-    const faceHeight =
-      box.height;
-
-
-    /*
-       转换到屏幕坐标
-    */
-
-    const targetX =
-      faceCenterX *
-      window.innerWidth;
-
-
-    /*
-       脸框顶部
-    */
-
-    const faceTop =
-      (
-        faceCenterY -
-        faceHeight / 2
-      ) *
-      window.innerHeight;
-
-
-    /*
-       王冠中心应该比头顶略微高一点。
-
-       这里的 0.04 控制
-       王冠上下位置。
-    */
-
-    const targetY =
-      faceTop -
-      window.innerHeight * 0.015;
-
-
-    /*
-       王冠大小跟脸宽联动。
-
-       2.05 控制王冠相对于头的宽度。
-    */
-
-    let targetWidth =
-      faceWidth *
-      window.innerWidth *
-      2.05;
-
-
-    /*
-       防止过大或过小
-    */
-
-    targetWidth =
-      Math.max(
-        150,
-        Math.min(
-          targetWidth,
-          600
-        )
-      );
-
-
-    /*
-       平滑位置
-    */
-
-    crownX +=
-      (targetX - crownX) *
-      CROWN_SMOOTH;
-
-
-    crownY +=
-      (targetY - crownY) *
-      CROWN_SMOOTH;
-
-
-    crownWidth +=
-      (targetWidth - crownWidth) *
-      CROWN_SMOOTH;
-
-
-    /*
-       更新王冠
-    */
-
-    crown.style.left =
-      crownX + "px";
-
-    crown.style.top =
-      crownY + "px";
-
-    crown.style.width =
-      crownWidth + "px";
-
-  }
 );
 
 
-/* =====================================================
-   P1 / P2 手的位置
-   ===================================================== */
+/* ==================================================
+   手势状态
+   ================================================== */
 
 let hand1X =
-  window.innerWidth * 0.35;
+    window.innerWidth * 0.35;
 
 let hand1Y =
-  window.innerHeight * 0.5;
+    window.innerHeight * 0.5;
 
 
 let hand2X =
-  window.innerWidth * 0.65;
+    window.innerWidth * 0.65;
 
 let hand2Y =
-  window.innerHeight * 0.5;
+    window.innerHeight * 0.5;
 
 
 let lastTarget1X = null;
@@ -575,10 +674,6 @@ let lastTarget1Y = null;
 let lastTarget2X = null;
 let lastTarget2Y = null;
 
-
-/* =====================================================
-   手势状态
-   ===================================================== */
 
 let hand1Open = false;
 let hand2Open = false;
@@ -590,631 +685,639 @@ let hand2OpenFrames = 0;
 let hand2ClosedFrames = 0;
 
 
-/* =====================================================
+/* ==================================================
    手掌中心
-   ===================================================== */
+   ================================================== */
 
 function getPalmCenter(hand) {
 
-  const points = [
+    const points = [
 
-    hand[0],
-    hand[5],
-    hand[9],
-    hand[13],
-    hand[17]
+        hand[0],
+        hand[5],
+        hand[9],
+        hand[13],
+        hand[17]
 
-  ];
-
-
-  let x = 0;
-  let y = 0;
+    ];
 
 
-  for (const point of points) {
-
-    x += point.x;
-    y += point.y;
-
-  }
+    let x = 0;
+    let y = 0;
 
 
-  return {
+    for (const point of points) {
 
-    x:
-      x / points.length,
+        x += point.x;
+        y += point.y;
 
-    y:
-      y / points.length
+    }
 
-  };
+
+    return {
+
+        x:
+            x / points.length,
+
+        y:
+            y / points.length
+
+    };
 
 }
 
 
-/* =====================================================
-   判断手掌展开程度
-   ===================================================== */
+/* ==================================================
+   手指展开程度
+   ================================================== */
 
 function getHandOpenRatio(hand) {
 
-  const wrist =
-    hand[0];
+    const wrist =
+        hand[0];
 
 
-  const fingertips = [
+    const fingertips = [
 
-    hand[4],
-    hand[8],
-    hand[12],
-    hand[16],
-    hand[20]
+        hand[4],
+        hand[8],
+        hand[12],
+        hand[16],
+        hand[20]
 
-  ];
-
-
-  let fingerDistance = 0;
+    ];
 
 
-  for (const tip of fingertips) {
+    let fingerDistance = 0;
 
-    fingerDistance += Math.hypot(
 
-      tip.x - wrist.x,
+    for (const tip of fingertips) {
 
-      tip.y - wrist.y
+        fingerDistance += Math.hypot(
 
+            tip.x -
+            wrist.x,
+
+            tip.y -
+            wrist.y
+
+        );
+
+    }
+
+
+    fingerDistance /=
+        fingertips.length;
+
+
+    const palmWidth =
+        Math.hypot(
+
+            hand[5].x -
+            hand[17].x,
+
+            hand[5].y -
+            hand[17].y
+
+        );
+
+
+    if (palmWidth < 0.001) {
+
+        return 0;
+
+    }
+
+
+    return (
+        fingerDistance /
+        palmWidth
     );
-
-  }
-
-
-  fingerDistance /=
-    fingertips.length;
-
-
-  const palmWidth =
-    Math.hypot(
-
-      hand[5].x - hand[17].x,
-
-      hand[5].y - hand[17].y
-
-    );
-
-
-  if (palmWidth < 0.001) {
-
-    return 0;
-
-  }
-
-
-  return (
-    fingerDistance /
-    palmWidth
-  );
 
 }
 
 
-/* =====================================================
-   稳定手势
-   ===================================================== */
+/* ==================================================
+   手势判断
+   ================================================== */
 
 function updateGesture(
-  hand,
-  number
+    hand,
+    number
 ) {
 
-  const ratio =
-    getHandOpenRatio(hand);
+    const ratio =
+        getHandOpenRatio(hand);
 
 
-  const OPEN_THRESHOLD =
-    2.20;
+    const OPEN_THRESHOLD =
+        2.20;
 
-  const CLOSE_THRESHOLD =
-    2.05;
+    const CLOSE_THRESHOLD =
+        2.05;
 
-  const CONFIRM_FRAMES =
-    3;
-
-
-  let changedToOpen =
-    false;
+    const CONFIRM_FRAMES =
+        3;
 
 
-  /* 第一只手 */
-
-  if (number === 1) {
-
-    const previous =
-      hand1Open;
+    let changedToOpen =
+        false;
 
 
-    if (
-      ratio >
-      OPEN_THRESHOLD
-    ) {
+    if (number === 1) {
 
-      hand1OpenFrames++;
-
-      hand1ClosedFrames = 0;
+        const previous =
+            hand1Open;
 
 
-      if (
-        hand1OpenFrames >=
-        CONFIRM_FRAMES
-      ) {
+        if (
+            ratio >
+            OPEN_THRESHOLD
+        ) {
 
-        hand1Open = true;
+            hand1OpenFrames++;
 
-      }
-
-    }
+            hand1ClosedFrames = 0;
 
 
-    else if (
-      ratio <
-      CLOSE_THRESHOLD
-    ) {
+            if (
+                hand1OpenFrames >=
+                CONFIRM_FRAMES
+            ) {
 
-      hand1ClosedFrames++;
+                hand1Open = true;
 
-      hand1OpenFrames = 0;
+            }
+
+        }
 
 
-      if (
-        hand1ClosedFrames >=
-        CONFIRM_FRAMES
-      ) {
+        else if (
+            ratio <
+            CLOSE_THRESHOLD
+        ) {
 
-        hand1Open = false;
+            hand1ClosedFrames++;
 
-      }
+            hand1OpenFrames = 0;
+
+
+            if (
+                hand1ClosedFrames >=
+                CONFIRM_FRAMES
+            ) {
+
+                hand1Open = false;
+
+            }
+
+        }
+
+
+        else {
+
+            hand1OpenFrames = 0;
+            hand1ClosedFrames = 0;
+
+        }
+
+
+        if (
+            previous === false &&
+            hand1Open === true
+        ) {
+
+            changedToOpen = true;
+
+        }
+
+
+        return {
+
+            opened:
+                hand1Open,
+
+            changedToOpen
+
+        };
 
     }
 
 
     else {
 
-      hand1OpenFrames = 0;
-
-      hand1ClosedFrames = 0;
-
-    }
+        const previous =
+            hand2Open;
 
 
-    if (
-      previous === false &&
-      hand1Open === true
-    ) {
+        if (
+            ratio >
+            OPEN_THRESHOLD
+        ) {
 
-      changedToOpen = true;
+            hand2OpenFrames++;
 
-    }
-
-
-    return {
-
-      opened:
-        hand1Open,
-
-      changedToOpen:
-        changedToOpen
-
-    };
-
-  }
+            hand2ClosedFrames = 0;
 
 
-  /* 第二只手 */
+            if (
+                hand2OpenFrames >=
+                CONFIRM_FRAMES
+            ) {
 
-  else {
+                hand2Open = true;
 
-    const previous =
-      hand2Open;
+            }
 
-
-    if (
-      ratio >
-      OPEN_THRESHOLD
-    ) {
-
-      hand2OpenFrames++;
-
-      hand2ClosedFrames = 0;
+        }
 
 
-      if (
-        hand2OpenFrames >=
-        CONFIRM_FRAMES
-      ) {
+        else if (
+            ratio <
+            CLOSE_THRESHOLD
+        ) {
 
-        hand2Open = true;
+            hand2ClosedFrames++;
 
-      }
-
-    }
+            hand2OpenFrames = 0;
 
 
-    else if (
-      ratio <
-      CLOSE_THRESHOLD
-    ) {
+            if (
+                hand2ClosedFrames >=
+                CONFIRM_FRAMES
+            ) {
 
-      hand2ClosedFrames++;
+                hand2Open = false;
 
-      hand2OpenFrames = 0;
+            }
+
+        }
 
 
-      if (
-        hand2ClosedFrames >=
-        CONFIRM_FRAMES
-      ) {
+        else {
 
-        hand2Open = false;
+            hand2OpenFrames = 0;
+            hand2ClosedFrames = 0;
 
-      }
+        }
+
+
+        if (
+            previous === false &&
+            hand2Open === true
+        ) {
+
+            changedToOpen = true;
+
+        }
+
+
+        return {
+
+            opened:
+                hand2Open,
+
+            changedToOpen
+
+        };
 
     }
-
-
-    else {
-
-      hand2OpenFrames = 0;
-
-      hand2ClosedFrames = 0;
-
-    }
-
-
-    if (
-      previous === false &&
-      hand2Open === true
-    ) {
-
-      changedToOpen = true;
-
-    }
-
-
-    return {
-
-      opened:
-        hand2Open,
-
-      changedToOpen:
-        changedToOpen
-
-    };
-
-  }
 
 }
 
 
-/* =====================================================
-   P1 / P2 平滑移动
-   ===================================================== */
+/* ==================================================
+   人物移动
+   ================================================== */
 
 function moveCharacter(
-  character,
-  targetX,
-  targetY,
-  number
+    character,
+    targetX,
+    targetY,
+    number
 ) {
 
-  const smooth =
-    0.24;
+    const smooth =
+        0.24;
 
-  const deadZone =
-    4;
-
-
-  if (number === 1) {
-
-    if (
-      lastTarget1X !== null
-    ) {
-
-      const distance =
-        Math.hypot(
-
-          targetX -
-          lastTarget1X,
-
-          targetY -
-          lastTarget1Y
-
-        );
+    const deadZone =
+        4;
 
 
-      if (
-        distance <
-        deadZone
-      ) {
+    if (number === 1) {
 
-        targetX =
-          lastTarget1X;
+        if (
+            lastTarget1X !== null
+        ) {
 
-        targetY =
-          lastTarget1Y;
+            const distance =
+                Math.hypot(
 
-      }
+                    targetX -
+                    lastTarget1X,
 
-    }
+                    targetY -
+                    lastTarget1Y
 
-
-    lastTarget1X =
-      targetX;
-
-    lastTarget1Y =
-      targetY;
+                );
 
 
-    hand1X +=
-      (targetX - hand1X) *
-      smooth;
+            if (
+                distance <
+                deadZone
+            ) {
+
+                targetX =
+                    lastTarget1X;
+
+                targetY =
+                    lastTarget1Y;
+
+            }
+
+        }
 
 
-    hand1Y +=
-      (targetY - hand1Y) *
-      smooth;
+        lastTarget1X =
+            targetX;
+
+        lastTarget1Y =
+            targetY;
 
 
-    character.style.left =
-      hand1X + "px";
-
-    character.style.top =
-      hand1Y + "px";
-
-  }
-
-
-  else {
-
-    if (
-      lastTarget2X !== null
-    ) {
-
-      const distance =
-        Math.hypot(
-
-          targetX -
-          lastTarget2X,
-
-          targetY -
-          lastTarget2Y
-
-        );
+        hand1X +=
+            (
+                targetX -
+                hand1X
+            ) *
+            smooth;
 
 
-      if (
-        distance <
-        deadZone
-      ) {
+        hand1Y +=
+            (
+                targetY -
+                hand1Y
+            ) *
+            smooth;
 
-        targetX =
-          lastTarget2X;
 
-        targetY =
-          lastTarget2Y;
+        character.style.left =
+            hand1X + "px";
 
-      }
+        character.style.top =
+            hand1Y + "px";
 
     }
 
 
-    lastTarget2X =
-      targetX;
+    else {
 
-    lastTarget2Y =
-      targetY;
+        if (
+            lastTarget2X !== null
+        ) {
+
+            const distance =
+                Math.hypot(
+
+                    targetX -
+                    lastTarget2X,
+
+                    targetY -
+                    lastTarget2Y
+
+                );
 
 
-    hand2X +=
-      (targetX - hand2X) *
-      smooth;
+            if (
+                distance <
+                deadZone
+            ) {
+
+                targetX =
+                    lastTarget2X;
+
+                targetY =
+                    lastTarget2Y;
+
+            }
+
+        }
 
 
-    hand2Y +=
-      (targetY - hand2Y) *
-      smooth;
+        lastTarget2X =
+            targetX;
+
+        lastTarget2Y =
+            targetY;
 
 
-    character.style.left =
-      hand2X + "px";
+        hand2X +=
+            (
+                targetX -
+                hand2X
+            ) *
+            smooth;
 
-    character.style.top =
-      hand2Y + "px";
 
-  }
+        hand2Y +=
+            (
+                targetY -
+                hand2Y
+            ) *
+            smooth;
+
+
+        character.style.left =
+            hand2X + "px";
+
+        character.style.top =
+            hand2Y + "px";
+
+    }
 
 }
 
 
-/* =====================================================
-   轻量烟花
-   ===================================================== */
+/* ==================================================
+   烟花
+   ================================================== */
 
 const particles = [];
 
 
 const colors = [
 
-  "#ffffff",
-  "#ffd54a",
-  "#ff7a45",
-  "#ff4f9a",
-  "#72f6ff",
-  "#a78bfa"
+    "#ffffff",
+    "#ffd54a",
+    "#ff7a45",
+    "#ff4f9a",
+    "#72f6ff",
+    "#a78bfa"
 
 ];
 
 
-function createFirework(
-  x,
-  y
-) {
+function createFirework(x, y) {
 
-  const amount =
-    75;
+    const amount =
+        75;
 
 
-  for (
-    let i = 0;
-    i < amount;
-    i++
-  ) {
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
 
-    const angle =
-      Math.random() *
-      Math.PI *
-      2;
-
-
-    const speed =
-      3 +
-      Math.random() *
-      9;
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
 
 
-    const color =
-      colors[
-        Math.floor(
-          Math.random() *
-          colors.length
-        )
-      ];
+        const speed =
+            3 +
+            Math.random() *
+            9;
 
 
-    particles.push({
+        const color =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
 
-      x,
-      y,
 
-      vx:
-        Math.cos(angle) *
-        speed,
+        particles.push({
 
-      vy:
-        Math.sin(angle) *
-        speed,
+            x,
+            y,
 
-      size:
-        2 +
-        Math.random() *
-        5,
+            vx:
+                Math.cos(angle) *
+                speed,
 
-      life:
-        1,
+            vy:
+                Math.sin(angle) *
+                speed,
 
-      decay:
-        .014 +
-        Math.random() *
-        .018,
+            size:
+                2 +
+                Math.random() *
+                5,
 
-      color
+            life:
+                1,
 
-    });
+            decay:
+                .014 +
+                Math.random() *
+                .018,
 
-  }
+            color
+
+        });
+
+    }
 
 }
 
 
 function animateFireworks() {
 
-  ctx.clearRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
 
-  for (
-    let i =
-      particles.length - 1;
+    for (
+        let i =
+            particles.length - 1;
 
-    i >= 0;
+        i >= 0;
 
-    i--
-  ) {
-
-    const p =
-      particles[i];
-
-
-    p.x += p.vx;
-    p.y += p.vy;
-
-    p.vx *= .985;
-    p.vy *= .985;
-
-    p.vy += .08;
-
-    p.life -= p.decay;
-
-
-    if (
-      p.life <= 0
+        i--
     ) {
 
-      particles.splice(
-        i,
-        1
-      );
+        const p =
+            particles[i];
 
-      continue;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+
+        p.vx *= .985;
+        p.vy *= .985;
+
+        p.vy += .08;
+
+
+        p.life -=
+            p.decay;
+
+
+        if (
+            p.life <= 0
+        ) {
+
+            particles.splice(
+                i,
+                1
+            );
+
+            continue;
+
+        }
+
+
+        ctx.save();
+
+
+        ctx.globalAlpha =
+            p.life;
+
+        ctx.fillStyle =
+            p.color;
+
+        ctx.shadowColor =
+            p.color;
+
+        ctx.shadowBlur =
+            10;
+
+
+        ctx.beginPath();
+
+
+        ctx.arc(
+
+            p.x,
+            p.y,
+
+            p.size,
+
+            0,
+            Math.PI * 2
+
+        );
+
+
+        ctx.fill();
+
+        ctx.restore();
 
     }
 
 
-    ctx.save();
-
-
-    ctx.globalAlpha =
-      p.life;
-
-    ctx.fillStyle =
-      p.color;
-
-    ctx.shadowColor =
-      p.color;
-
-    ctx.shadowBlur =
-      10;
-
-
-    ctx.beginPath();
-
-
-    ctx.arc(
-
-      p.x,
-      p.y,
-
-      p.size,
-
-      0,
-      Math.PI * 2
-
+    requestAnimationFrame(
+        animateFireworks
     );
-
-
-    ctx.fill();
-
-    ctx.restore();
-
-  }
-
-
-  requestAnimationFrame(
-    animateFireworks
-  );
 
 }
 
@@ -1222,254 +1325,267 @@ function animateFireworks() {
 animateFireworks();
 
 
-/* =====================================================
-   MediaPipe Hands
-   ===================================================== */
+/* ==================================================
+   Hands
+   ================================================== */
 
 const hands =
-  new Hands({
+    new Hands({
 
-    locateFile:
-      (file) =>
+        locateFile:
+            (file) => {
 
-        "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" +
-        file
+                return (
 
-  });
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" +
+                    file
+
+                );
+
+            }
+
+    });
 
 
 hands.setOptions({
 
-  maxNumHands:
-    2,
+    maxNumHands:
+        2,
 
-  modelComplexity:
-    1,
+    modelComplexity:
+        1,
 
-  minDetectionConfidence:
-    .72,
+    minDetectionConfidence:
+        .72,
 
-  minTrackingConfidence:
-    .72
+    minTrackingConfidence:
+        .72
 
 });
 
 
 hands.onResults(
-  (results) => {
+    (results) => {
 
 
-    const detectedHands =
-      results.multiHandLandmarks
-      || [];
+        const detectedHands =
+            results.multiHandLandmarks
+            || [];
 
 
-    character1.style.display =
-      "none";
+        character1.style.display =
+            "none";
 
-    character2.style.display =
-      "none";
+        character2.style.display =
+            "none";
 
 
-    if (
-      detectedHands.length === 0
-    ) {
+        if (
+            detectedHands.length === 0
+        ) {
 
-      status.innerText =
-        "👋 请把手放进摄像头";
+            status.innerText =
+                "👋 请把手放进摄像头";
 
-      return;
+            return;
+
+        }
+
+
+        for (
+            let i = 0;
+
+            i <
+            detectedHands.length &&
+            i < 2;
+
+            i++
+        ) {
+
+            const hand =
+                detectedHands[i];
+
+
+            const character =
+                i === 0
+                ? character1
+                : character2;
+
+
+            const palm =
+                getPalmCenter(hand);
+
+
+            const screenX =
+                (1 - palm.x) *
+                window.innerWidth;
+
+
+            const screenY =
+                palm.y *
+                window.innerHeight;
+
+
+            const gesture =
+                updateGesture(
+                    hand,
+                    i + 1
+                );
+
+
+            const wantedImage =
+                gesture.opened
+                ? "p2.png"
+                : "p1.png";
+
+
+            if (
+                !character.src.endsWith(
+                    wantedImage
+                )
+            ) {
+
+                character.src =
+                    wantedImage;
+
+            }
+
+
+            character.style.display =
+                "block";
+
+
+            moveCharacter(
+
+                character,
+
+                screenX,
+                screenY,
+
+                i + 1
+
+            );
+
+
+            if (
+                gesture.changedToOpen
+            ) {
+
+                createFirework(
+
+                    screenX,
+                    screenY
+
+                );
+
+            }
+
+        }
+
+
+        if (
+            detectedHands.length >= 2
+        ) {
+
+            status.innerText =
+                "👐 双手已识别";
+
+        }
+
+        else {
+
+            status.innerText =
+                hand1Open
+                ? "🎆 手掌展开 · P2"
+                : "✊ 手指聚拢 · P1";
+
+        }
 
     }
-
-
-    for (
-      let i = 0;
-
-      i < detectedHands.length &&
-      i < 2;
-
-      i++
-    ) {
-
-
-      const hand =
-        detectedHands[i];
-
-
-      const character =
-        i === 0
-          ? character1
-          : character2;
-
-
-      const palm =
-        getPalmCenter(hand);
-
-
-      const screenX =
-        (1 - palm.x) *
-        window.innerWidth;
-
-
-      const screenY =
-        palm.y *
-        window.innerHeight;
-
-
-      const gesture =
-        updateGesture(
-          hand,
-          i + 1
-        );
-
-
-      const wantedImage =
-        gesture.opened
-          ? "p2.png"
-          : "p1.png";
-
-
-      if (
-        !character.src.endsWith(
-          wantedImage
-        )
-      ) {
-
-        character.src =
-          wantedImage;
-
-      }
-
-
-      character.style.display =
-        "block";
-
-
-      moveCharacter(
-
-        character,
-
-        screenX,
-        screenY,
-
-        i + 1
-
-      );
-
-
-      if (
-        gesture.changedToOpen
-      ) {
-
-        createFirework(
-
-          screenX,
-          screenY
-
-        );
-
-      }
-
-    }
-
-
-    if (
-      detectedHands.length >= 2
-    ) {
-
-      status.innerText =
-        "👐 双手已识别";
-
-    }
-
-    else {
-
-      status.innerText =
-        hand1Open
-          ? "🎆 手掌展开 · P2"
-          : "✊ 手指聚拢 · P1";
-
-    }
-
-  }
 );
 
 
-/* =====================================================
+/* ==================================================
    摄像头
-
-   同一帧同时发送给：
-   1. Hands
-   2. Face Detection
-
-   所以王冠和手势是完全独立的。
-   ===================================================== */
+   ================================================== */
 
 let processing =
-  false;
+    false;
+
+let frameCount =
+    0;
 
 
 const camera =
-  new Camera(
-    video,
-    {
+    new Camera(
+        video,
+        {
 
-      onFrame:
-        async () => {
-
-
-          if (processing) {
-            return;
-          }
+            onFrame:
+                async () => {
 
 
-          processing =
-            true;
+                    if (processing) {
+                        return;
+                    }
 
 
-          try {
-
-            /*
-              识别双手
-            */
-
-            await hands.send({
-              image: video
-            });
+                    processing =
+                        true;
 
 
-            /*
-              识别人脸
-            */
+                    try {
 
-            await faceDetection.send({
-              image: video
-            });
+                        await hands.send({
 
-          }
+                            image:
+                                video
 
-          catch(e) {
-
-            console.error(e);
-
-          }
+                        });
 
 
-          processing =
-            false;
-
-        },
+                        frameCount++;
 
 
-      width:
-        1280,
+                        if (
+                            frameCount % 2 === 0
+                        ) {
 
-      height:
-        720
+                            await faceMesh.send({
 
-    }
-  );
+                                image:
+                                    video
+
+                            });
+
+                        }
+
+                    }
+
+
+                    catch(error) {
+
+                        console.error(
+                            error
+                        );
+
+                    }
+
+
+                    processing =
+                        false;
+
+                },
+
+
+            width:
+                1280,
+
+            height:
+                720
+
+        }
+    );
 
 
 camera.start();
@@ -1478,4 +1594,3 @@ camera.start();
 
 </body>
 </html>
-?p3test=1
