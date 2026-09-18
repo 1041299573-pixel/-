@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>手势人物互动</title>
+<title>大俊展翅</title>
 
 <style>
 
@@ -24,7 +24,9 @@ body {
 }
 
 
-/* 摄像头 */
+/* =========================
+   摄像头
+   ========================= */
 
 #video {
     position: fixed;
@@ -41,7 +43,9 @@ body {
 }
 
 
-/* P1 / P2 */
+/* =========================
+   P1 / P2
+   ========================= */
 
 .character {
     position: fixed;
@@ -64,7 +68,13 @@ body {
 }
 
 
-/* 王冠 */
+/* =========================
+   P3 王冠
+
+   重点：
+   永远保持正向
+   不再 rotate
+   ========================= */
 
 #crown {
     position: fixed;
@@ -72,24 +82,34 @@ body {
     left: 0;
     top: 0;
 
-    width: 200px;
+    width: 150px;
     height: auto;
 
+    /*
+      只移动位置
+      不旋转
+      不翻转
+    */
     transform: translate(-50%, -82%);
 
-    transform-origin: center bottom;
-
     pointer-events: none;
+
+    user-select: none;
 
     z-index: 25;
 
     display: none;
 
-    will-change: left, top, width, transform;
+    will-change:
+        left,
+        top,
+        width;
 }
 
 
-/* 烟花 */
+/* =========================
+   烟花
+   ========================= */
 
 #fireworks {
     position: fixed;
@@ -104,7 +124,9 @@ body {
 }
 
 
-/* 状态 */
+/* =========================
+   状态
+   ========================= */
 
 #status {
     position: fixed;
@@ -118,7 +140,8 @@ body {
 
     color: white;
 
-    background: rgba(0,0,0,.68);
+    background:
+        rgba(0,0,0,.68);
 
     border-radius: 999px;
 
@@ -148,6 +171,8 @@ body {
 <body>
 
 
+<!-- 摄像头 -->
+
 <video
     id="video"
     autoplay
@@ -156,11 +181,15 @@ body {
 </video>
 
 
+<!-- P1 -->
+
 <img
     id="character1"
     class="character"
     src="p1.png">
 
+
+<!-- P2 -->
 
 <img
     id="character2"
@@ -168,13 +197,19 @@ body {
     src="p1.png">
 
 
+<!-- P3 -->
+
 <img
     id="crown"
     src="https://1041299573-pixel.github.io/-/p3.png">
 
 
+<!-- 烟花 -->
+
 <canvas id="fireworks"></canvas>
 
+
+<!-- 背景音乐 -->
 
 <audio
     id="bgMusic"
@@ -189,6 +224,8 @@ body {
     👋 请把手放进摄像头
 </div>
 
+
+<!-- MediaPipe -->
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -237,7 +274,9 @@ let musicStarted = false;
 
 async function startMusic() {
 
-    if (musicStarted) return;
+    if (musicStarted) {
+        return;
+    }
 
     try {
 
@@ -249,7 +288,9 @@ async function startMusic() {
 
     catch(e) {
 
-        console.log("等待用户操作后播放音乐");
+        console.log(
+            "等待用户操作后播放音乐"
+        );
 
     }
 
@@ -279,7 +320,7 @@ document.addEventListener(
 document.addEventListener(
     "touchstart",
     startMusic,
-    { passive:true }
+    { passive: true }
 );
 
 startMusic();
@@ -299,7 +340,9 @@ function resizeCanvas() {
 
 }
 
+
 resizeCanvas();
+
 
 window.addEventListener(
     "resize",
@@ -329,8 +372,11 @@ function normalizedToScreen(x, y) {
 
     const scale =
         Math.max(
+
             sw / vw,
+
             sh / vh
+
         );
 
 
@@ -342,11 +388,22 @@ function normalizedToScreen(x, y) {
 
 
     const cropX =
-        (realWidth - sw) / 2;
+        (
+            realWidth -
+            sw
+        ) / 2;
+
 
     const cropY =
-        (realHeight - sh) / 2;
+        (
+            realHeight -
+            sh
+        ) / 2;
 
+
+    /*
+      摄像头镜像
+    */
 
     const screenX =
         (1 - x) *
@@ -362,8 +419,11 @@ function normalizedToScreen(x, y) {
 
     return {
 
-        x: screenX,
-        y: screenY
+        x:
+            screenX,
+
+        y:
+            screenY
 
     };
 
@@ -371,19 +431,21 @@ function normalizedToScreen(x, y) {
 
 
 /* ==================================================
-   王冠追踪
+   王冠追踪状态
    ================================================== */
 
 let crownX = 0;
 
 let crownY = 0;
 
-let crownSize = 200;
-
-let crownAngle = 0;
+let crownSize = 150;
 
 let crownReady = false;
 
+
+/*
+  跟随速度
+*/
 
 const CROWN_SMOOTH =
     0.42;
@@ -396,25 +458,28 @@ const CROWN_SMOOTH =
 const faceMesh =
     new FaceMesh({
 
-        locateFile: (file) => {
+        locateFile:
+            (file) => {
 
-            return (
+                return (
 
-                "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/" +
-                file
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/" +
+                    file
 
-            );
+                );
 
-        }
+            }
 
     });
 
 
 faceMesh.setOptions({
 
-    maxNumFaces: 1,
+    maxNumFaces:
+        1,
 
-    refineLandmarks: false,
+    refineLandmarks:
+        false,
 
     minDetectionConfidence:
         0.55,
@@ -424,6 +489,10 @@ faceMesh.setOptions({
 
 });
 
+
+/* ==================================================
+   人脸追踪
+   ================================================== */
 
 faceMesh.onResults(
     (results) => {
@@ -449,6 +518,14 @@ faceMesh.onResults(
             results.multiFaceLandmarks[0];
 
 
+        /*
+          10 =
+          额头上方
+
+          234 / 454 =
+          脸左右两边
+        */
+
         const forehead =
             face[10];
 
@@ -458,47 +535,40 @@ faceMesh.onResults(
         const rightSide =
             face[454];
 
-        const leftEye =
-            face[33];
-
-        const rightEye =
-            face[263];
-
 
         const foreheadScreen =
             normalizedToScreen(
+
                 forehead.x,
+
                 forehead.y
+
             );
 
 
         const leftScreen =
             normalizedToScreen(
+
                 leftSide.x,
+
                 leftSide.y
+
             );
 
 
         const rightScreen =
             normalizedToScreen(
+
                 rightSide.x,
+
                 rightSide.y
+
             );
 
 
-        const leftEyeScreen =
-            normalizedToScreen(
-                leftEye.x,
-                leftEye.y
-            );
-
-
-        const rightEyeScreen =
-            normalizedToScreen(
-                rightEye.x,
-                rightEye.y
-            );
-
+        /* ==================================================
+           计算头宽
+           ================================================== */
 
         const headWidth =
             Math.hypot(
@@ -512,63 +582,59 @@ faceMesh.onResults(
             );
 
 
-        /* ==========================================
-           王冠位置
+        /* ==================================================
+           王冠 X
 
-           这里只改了这一处：
-
-           原来王冠太低。
-           现在直接向上移动很多。
-
-           0.38 越大越往上。
-           ========================================== */
+           跟额头
+           ================================================== */
 
         const targetX =
             foreheadScreen.x;
 
 
+        /* ==================================================
+           王冠 Y
+
+           往头顶上方移动
+
+           如果还觉得低：
+           0.50 可以继续改 0.55
+           ================================================== */
+
         const targetY =
             foreheadScreen.y -
-            headWidth * 0.38;
+            headWidth * 0.50;
 
 
-        /* ==========================================
+        /* ==================================================
            王冠大小
 
-           保持之前逻辑
-           ========================================== */
+           已经明显缩小
+           ================================================== */
 
         let targetSize =
-            headWidth * 1.45;
+            headWidth * 0.85;
 
 
         targetSize =
             Math.max(
-                120,
+
+                90,
+
                 Math.min(
+
                     targetSize,
-                    520
+
+                    320
+
                 )
+
             );
 
 
-        /* ==========================================
-           跟随头部角度
-           ========================================== */
-
-        const targetAngle =
-            Math.atan2(
-
-                rightEyeScreen.y -
-                leftEyeScreen.y,
-
-                rightEyeScreen.x -
-                leftEyeScreen.x
-
-            ) *
-            180 /
-            Math.PI;
-
+        /* ==================================================
+           第一次检测
+           ================================================== */
 
         if (!crownReady) {
 
@@ -581,15 +647,14 @@ faceMesh.onResults(
             crownSize =
                 targetSize;
 
-            crownAngle =
-                targetAngle;
-
             crownReady =
                 true;
 
         }
 
         else {
+
+            /* X 跟随 */
 
             crownX +=
                 (
@@ -599,6 +664,8 @@ faceMesh.onResults(
                 CROWN_SMOOTH;
 
 
+            /* Y 跟随 */
+
             crownY +=
                 (
                     targetY -
@@ -607,6 +674,8 @@ faceMesh.onResults(
                 CROWN_SMOOTH;
 
 
+            /* 大小跟随 */
+
             crownSize +=
                 (
                     targetSize -
@@ -614,16 +683,12 @@ faceMesh.onResults(
                 ) *
                 CROWN_SMOOTH;
 
-
-            crownAngle +=
-                (
-                    targetAngle -
-                    crownAngle
-                ) *
-                0.30;
-
         }
 
+
+        /* ==================================================
+           更新 P3
+           ================================================== */
 
         crown.style.display =
             "block";
@@ -641,17 +706,26 @@ faceMesh.onResults(
             crownSize + "px";
 
 
+        /*
+          ！！！重点！！！
+
+          这里完全取消 rotate。
+
+          所以 P3 无论你怎么动头，
+          永远都是正的。
+
+          不可能再转 180°。
+        */
+
         crown.style.transform =
-            "translate(-50%, -82%) rotate(" +
-            crownAngle +
-            "deg)";
+            "translate(-50%, -82%)";
 
     }
 );
 
 
 /* ==================================================
-   手势状态
+   手势人物状态
    ================================================== */
 
 let hand1X =
@@ -669,19 +743,25 @@ let hand2Y =
 
 
 let lastTarget1X = null;
+
 let lastTarget1Y = null;
 
 let lastTarget2X = null;
+
 let lastTarget2Y = null;
 
 
 let hand1Open = false;
+
 let hand2Open = false;
 
+
 let hand1OpenFrames = 0;
+
 let hand1ClosedFrames = 0;
 
 let hand2OpenFrames = 0;
+
 let hand2ClosedFrames = 0;
 
 
@@ -694,22 +774,32 @@ function getPalmCenter(hand) {
     const points = [
 
         hand[0],
+
         hand[5],
+
         hand[9],
+
         hand[13],
+
         hand[17]
 
     ];
 
 
     let x = 0;
+
     let y = 0;
 
 
-    for (const point of points) {
+    for (
+        const point of points
+    ) {
 
-        x += point.x;
-        y += point.y;
+        x +=
+            point.x;
+
+        y +=
+            point.y;
 
     }
 
@@ -717,10 +807,12 @@ function getPalmCenter(hand) {
     return {
 
         x:
-            x / points.length,
+            x /
+            points.length,
 
         y:
-            y / points.length
+            y /
+            points.length
 
     };
 
@@ -728,7 +820,7 @@ function getPalmCenter(hand) {
 
 
 /* ==================================================
-   手指展开程度
+   手掌展开程度
    ================================================== */
 
 function getHandOpenRatio(hand) {
@@ -740,28 +832,36 @@ function getHandOpenRatio(hand) {
     const fingertips = [
 
         hand[4],
+
         hand[8],
+
         hand[12],
+
         hand[16],
+
         hand[20]
 
     ];
 
 
-    let fingerDistance = 0;
+    let fingerDistance =
+        0;
 
 
-    for (const tip of fingertips) {
+    for (
+        const tip of fingertips
+    ) {
 
-        fingerDistance += Math.hypot(
+        fingerDistance +=
+            Math.hypot(
 
-            tip.x -
-            wrist.x,
+                tip.x -
+                wrist.x,
 
-            tip.y -
-            wrist.y
+                tip.y -
+                wrist.y
 
-        );
+            );
 
     }
 
@@ -782,7 +882,10 @@ function getHandOpenRatio(hand) {
         );
 
 
-    if (palmWidth < 0.001) {
+    if (
+        palmWidth <
+        0.001
+    ) {
 
         return 0;
 
@@ -790,15 +893,17 @@ function getHandOpenRatio(hand) {
 
 
     return (
+
         fingerDistance /
         palmWidth
+
     );
 
 }
 
 
 /* ==================================================
-   手势判断
+   手势状态
    ================================================== */
 
 function updateGesture(
@@ -807,7 +912,9 @@ function updateGesture(
 ) {
 
     const ratio =
-        getHandOpenRatio(hand);
+        getHandOpenRatio(
+            hand
+        );
 
 
     const OPEN_THRESHOLD =
@@ -824,7 +931,11 @@ function updateGesture(
         false;
 
 
-    if (number === 1) {
+    /* 第一只手 */
+
+    if (
+        number === 1
+    ) {
 
         const previous =
             hand1Open;
@@ -837,7 +948,8 @@ function updateGesture(
 
             hand1OpenFrames++;
 
-            hand1ClosedFrames = 0;
+            hand1ClosedFrames =
+                0;
 
 
             if (
@@ -845,7 +957,8 @@ function updateGesture(
                 CONFIRM_FRAMES
             ) {
 
-                hand1Open = true;
+                hand1Open =
+                    true;
 
             }
 
@@ -859,7 +972,8 @@ function updateGesture(
 
             hand1ClosedFrames++;
 
-            hand1OpenFrames = 0;
+            hand1OpenFrames =
+                0;
 
 
             if (
@@ -867,7 +981,8 @@ function updateGesture(
                 CONFIRM_FRAMES
             ) {
 
-                hand1Open = false;
+                hand1Open =
+                    false;
 
             }
 
@@ -876,8 +991,11 @@ function updateGesture(
 
         else {
 
-            hand1OpenFrames = 0;
-            hand1ClosedFrames = 0;
+            hand1OpenFrames =
+                0;
+
+            hand1ClosedFrames =
+                0;
 
         }
 
@@ -887,7 +1005,8 @@ function updateGesture(
             hand1Open === true
         ) {
 
-            changedToOpen = true;
+            changedToOpen =
+                true;
 
         }
 
@@ -897,12 +1016,15 @@ function updateGesture(
             opened:
                 hand1Open,
 
-            changedToOpen
+            changedToOpen:
+                changedToOpen
 
         };
 
     }
 
+
+    /* 第二只手 */
 
     else {
 
@@ -917,7 +1039,8 @@ function updateGesture(
 
             hand2OpenFrames++;
 
-            hand2ClosedFrames = 0;
+            hand2ClosedFrames =
+                0;
 
 
             if (
@@ -925,7 +1048,8 @@ function updateGesture(
                 CONFIRM_FRAMES
             ) {
 
-                hand2Open = true;
+                hand2Open =
+                    true;
 
             }
 
@@ -939,7 +1063,8 @@ function updateGesture(
 
             hand2ClosedFrames++;
 
-            hand2OpenFrames = 0;
+            hand2OpenFrames =
+                0;
 
 
             if (
@@ -947,7 +1072,8 @@ function updateGesture(
                 CONFIRM_FRAMES
             ) {
 
-                hand2Open = false;
+                hand2Open =
+                    false;
 
             }
 
@@ -956,8 +1082,11 @@ function updateGesture(
 
         else {
 
-            hand2OpenFrames = 0;
-            hand2ClosedFrames = 0;
+            hand2OpenFrames =
+                0;
+
+            hand2ClosedFrames =
+                0;
 
         }
 
@@ -967,7 +1096,8 @@ function updateGesture(
             hand2Open === true
         ) {
 
-            changedToOpen = true;
+            changedToOpen =
+                true;
 
         }
 
@@ -977,7 +1107,8 @@ function updateGesture(
             opened:
                 hand2Open,
 
-            changedToOpen
+            changedToOpen:
+                changedToOpen
 
         };
 
@@ -987,7 +1118,7 @@ function updateGesture(
 
 
 /* ==================================================
-   人物移动
+   P1 / P2 移动
    ================================================== */
 
 function moveCharacter(
@@ -1004,10 +1135,13 @@ function moveCharacter(
         4;
 
 
-    if (number === 1) {
+    if (
+        number === 1
+    ) {
 
         if (
-            lastTarget1X !== null
+            lastTarget1X !==
+            null
         ) {
 
             const distance =
@@ -1062,10 +1196,13 @@ function moveCharacter(
 
 
         character.style.left =
-            hand1X + "px";
+            hand1X +
+            "px";
+
 
         character.style.top =
-            hand1Y + "px";
+            hand1Y +
+            "px";
 
     }
 
@@ -1073,7 +1210,8 @@ function moveCharacter(
     else {
 
         if (
-            lastTarget2X !== null
+            lastTarget2X !==
+            null
         ) {
 
             const distance =
@@ -1128,10 +1266,13 @@ function moveCharacter(
 
 
         character.style.left =
-            hand2X + "px";
+            hand2X +
+            "px";
+
 
         character.style.top =
-            hand2Y + "px";
+            hand2Y +
+            "px";
 
     }
 
@@ -1148,16 +1289,24 @@ const particles = [];
 const colors = [
 
     "#ffffff",
+
     "#ffd54a",
+
     "#ff7a45",
+
     "#ff4f9a",
+
     "#72f6ff",
+
     "#a78bfa"
 
 ];
 
 
-function createFirework(x, y) {
+function createFirework(
+    x,
+    y
+) {
 
     const amount =
         75;
@@ -1165,7 +1314,9 @@ function createFirework(x, y) {
 
     for (
         let i = 0;
+
         i < amount;
+
         i++
     ) {
 
@@ -1183,40 +1334,58 @@ function createFirework(x, y) {
 
         const color =
             colors[
+
                 Math.floor(
+
                     Math.random() *
                     colors.length
+
                 )
+
             ];
 
 
         particles.push({
 
-            x,
-            y,
+            x:
+                x,
+
+            y:
+                y,
+
 
             vx:
-                Math.cos(angle) *
+                Math.cos(
+                    angle
+                ) *
                 speed,
 
+
             vy:
-                Math.sin(angle) *
+                Math.sin(
+                    angle
+                ) *
                 speed,
+
 
             size:
                 2 +
                 Math.random() *
                 5,
 
+
             life:
                 1,
+
 
             decay:
                 .014 +
                 Math.random() *
                 .018,
 
-            color
+
+            color:
+                color
 
         });
 
@@ -1228,10 +1397,15 @@ function createFirework(x, y) {
 function animateFireworks() {
 
     ctx.clearRect(
+
         0,
+
         0,
+
         canvas.width,
+
         canvas.height
+
     );
 
 
@@ -1248,14 +1422,22 @@ function animateFireworks() {
             particles[i];
 
 
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x +=
+            p.vx;
+
+        p.y +=
+            p.vy;
 
 
-        p.vx *= .985;
-        p.vy *= .985;
+        p.vx *=
+            .985;
 
-        p.vy += .08;
+        p.vy *=
+            .985;
+
+
+        p.vy +=
+            .08;
 
 
         p.life -=
@@ -1282,11 +1464,14 @@ function animateFireworks() {
         ctx.globalAlpha =
             p.life;
 
+
         ctx.fillStyle =
             p.color;
 
+
         ctx.shadowColor =
             p.color;
+
 
         ctx.shadowBlur =
             10;
@@ -1298,17 +1483,20 @@ function animateFireworks() {
         ctx.arc(
 
             p.x,
+
             p.y,
 
             p.size,
 
             0,
+
             Math.PI * 2
 
         );
 
 
         ctx.fill();
+
 
         ctx.restore();
 
@@ -1326,7 +1514,7 @@ animateFireworks();
 
 
 /* ==================================================
-   Hands
+   MediaPipe Hands
    ================================================== */
 
 const hands =
@@ -1381,7 +1569,8 @@ hands.onResults(
 
 
         if (
-            detectedHands.length === 0
+            detectedHands.length ===
+            0
         ) {
 
             status.innerText =
@@ -1413,11 +1602,16 @@ hands.onResults(
 
 
             const palm =
-                getPalmCenter(hand);
+                getPalmCenter(
+                    hand
+                );
 
 
             const screenX =
-                (1 - palm.x) *
+                (
+                    1 -
+                    palm.x
+                ) *
                 window.innerWidth;
 
 
@@ -1428,14 +1622,19 @@ hands.onResults(
 
             const gesture =
                 updateGesture(
+
                     hand,
+
                     i + 1
+
                 );
 
 
             const wantedImage =
                 gesture.opened
+
                 ? "p2.png"
+
                 : "p1.png";
 
 
@@ -1460,6 +1659,7 @@ hands.onResults(
                 character,
 
                 screenX,
+
                 screenY,
 
                 i + 1
@@ -1474,6 +1674,7 @@ hands.onResults(
                 createFirework(
 
                     screenX,
+
                     screenY
 
                 );
@@ -1484,7 +1685,8 @@ hands.onResults(
 
 
         if (
-            detectedHands.length >= 2
+            detectedHands.length >=
+            2
         ) {
 
             status.innerText =
@@ -1495,8 +1697,11 @@ hands.onResults(
         else {
 
             status.innerText =
+
                 hand1Open
+
                 ? "🎆 手掌展开 · P2"
+
                 : "✊ 手指聚拢 · P1";
 
         }
@@ -1506,7 +1711,7 @@ hands.onResults(
 
 
 /* ==================================================
-   摄像头
+   摄像头处理
    ================================================== */
 
 let processing =
@@ -1525,8 +1730,12 @@ const camera =
                 async () => {
 
 
-                    if (processing) {
+                    if (
+                        processing
+                    ) {
+
                         return;
+
                     }
 
 
@@ -1535,6 +1744,10 @@ const camera =
 
 
                     try {
+
+                        /*
+                          Hands
+                        */
 
                         await hands.send({
 
@@ -1547,8 +1760,14 @@ const camera =
                         frameCount++;
 
 
+                        /*
+                          FaceMesh
+                          每两帧一次
+                        */
+
                         if (
-                            frameCount % 2 === 0
+                            frameCount %
+                            2 === 0
                         ) {
 
                             await faceMesh.send({
