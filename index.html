@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>手势人物互动</title>
+  <title>大俊展翅</title>
 
   <style>
     * {
@@ -32,7 +31,7 @@
       z-index: 1;
     }
 
-    /* 人物 */
+    /* P1 / P2 */
     .character {
       position: fixed;
       left: 50%;
@@ -55,6 +54,35 @@
       will-change: left, top;
     }
 
+    /* =========================================
+       P3 王冠测试
+       强制放在画面正中央
+       ========================================= */
+
+    #crown {
+      position: fixed !important;
+
+      left: 50% !important;
+      top: 50% !important;
+
+      width: 400px !important;
+      height: auto !important;
+
+      transform: translate(-50%, -50%) !important;
+
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+
+      pointer-events: none;
+
+      /*
+        故意设置得非常高
+        保证压在摄像头、人物、烟花上面
+      */
+      z-index: 999999 !important;
+    }
+
     /* 烟花 */
     #fireworks {
       position: fixed;
@@ -68,7 +96,7 @@
       z-index: 20;
     }
 
-    /* 状态提示 */
+    /* 状态 */
     #status {
       position: fixed;
 
@@ -80,14 +108,13 @@
       padding: 10px 18px;
 
       color: white;
-
       background: rgba(0, 0, 0, 0.68);
 
       border-radius: 999px;
 
       font-size: 15px;
 
-      z-index: 100;
+      z-index: 1000000;
 
       pointer-events: none;
 
@@ -95,13 +122,19 @@
     }
 
     @media (max-width: 700px) {
+
       .character {
         width: 560px;
         height: 560px;
       }
+
+      #crown {
+        width: 300px !important;
+      }
     }
   </style>
 </head>
+
 
 <body>
 
@@ -114,7 +147,7 @@
   ></video>
 
 
-  <!-- 第一只手控制的人物 -->
+  <!-- P1 -->
   <img
     id="character1"
     class="character"
@@ -123,7 +156,7 @@
   >
 
 
-  <!-- 第二只手控制的人物 -->
+  <!-- P2 -->
   <img
     id="character2"
     class="character"
@@ -136,17 +169,26 @@
   <canvas id="fireworks"></canvas>
 
 
-  <!-- =========================
-       背景音乐
+  <!--
+      P3 王冠
 
-       firework.mp3 = 整首歌曲
-       loop = 自动循环
-       ========================= -->
+      这里直接使用已经确认
+      可以访问的线上图片
+  -->
+  <img
+    id="crown"
+    src="https://1041299573-pixel.github.io/-/p3.png"
+    alt="王冠"
+  >
+
+
+  <!-- 背景音乐 -->
   <audio
     id="bgMusic"
-    src="firework.mp3"
+    src="https://1041299573-pixel.github.io/-/firework.mp3"
     preload="auto"
     loop
+    playsinline
   ></audio>
 
 
@@ -162,9 +204,9 @@
 
   <script>
 
-    /* ==================================================
-       获取元素
-       ================================================== */
+    /* =========================================
+       元素
+       ========================================= */
 
     const video =
       document.getElementById("video");
@@ -188,89 +230,86 @@
       document.getElementById("bgMusic");
 
 
-    /* ==================================================
-       背景音乐
-       ================================================== */
+    /* =========================================
+       音乐
+       ========================================= */
 
     bgMusic.volume = 0.8;
 
+    let musicStarted = false;
 
-    function startMusic() {
 
-      if (!bgMusic.paused) {
+    async function startMusic() {
+
+      if (musicStarted) {
         return;
       }
 
-      bgMusic.play().catch(() => {
-        /*
-          如果浏览器阻止自动播放，
-          等待用户第一次点击/触摸。
-        */
-      });
+      try {
 
+        await bgMusic.play();
+
+        musicStarted = true;
+
+      }
+
+      catch (error) {
+
+        console.log("等待用户操作后播放音乐");
+
+      }
     }
 
 
-    /*
-      网页加载完成后
-      立即尝试播放
-    */
-
     window.addEventListener(
       "load",
-      () => {
-
-        startMusic();
-
-      }
+      startMusic
     );
 
 
-    /*
-      Chrome / Safari 如果阻止自动播放，
-      第一次点击网页时自动开始。
-    */
+    bgMusic.addEventListener(
+      "canplaythrough",
+      startMusic
+    );
+
+
+    document.addEventListener(
+      "pointerdown",
+      startMusic
+    );
+
 
     document.addEventListener(
       "click",
-      () => {
-
-        startMusic();
-
-      },
-      { once: true }
+      startMusic
     );
 
 
     document.addEventListener(
       "touchstart",
-      () => {
-
-        startMusic();
-
-      },
-      { once: true }
+      startMusic,
+      { passive: true }
     );
 
-
-    /*
-      键盘操作也可以解锁音乐
-    */
 
     document.addEventListener(
       "keydown",
-      () => {
-
-        startMusic();
-
-      },
-      { once: true }
+      startMusic
     );
 
 
-    /* ==================================================
-       Canvas 尺寸
-       ================================================== */
+    window.addEventListener(
+      "focus",
+      startMusic
+    );
+
+
+    startMusic();
+
+
+    /* =========================================
+       Canvas
+       ========================================= */
 
     function resizeCanvas() {
 
@@ -282,12 +321,19 @@
 
     }
 
+
     resizeCanvas();
 
 
-    /* ==================================================
+    window.addEventListener(
+      "resize",
+      resizeCanvas
+    );
+
+
+    /* =========================================
        人物位置
-       ================================================== */
+       ========================================= */
 
     let hand1X =
       window.innerWidth * 0.35;
@@ -310,13 +356,12 @@
     let lastTarget2Y = null;
 
 
-    /* ==================================================
+    /* =========================================
        手势状态
-       ================================================== */
+       ========================================= */
 
     let hand1Open = false;
     let hand2Open = false;
-
 
     let hand1OpenFrames = 0;
     let hand1ClosedFrames = 0;
@@ -325,20 +370,18 @@
     let hand2ClosedFrames = 0;
 
 
-    /* ==================================================
-       获取手掌中心
-       ================================================== */
+    /* =========================================
+       手掌中心
+       ========================================= */
 
     function getPalmCenter(hand) {
 
       const points = [
-
         hand[0],
         hand[5],
         hand[9],
         hand[13],
         hand[17]
-
       ];
 
 
@@ -360,13 +403,12 @@
         y: y / points.length
 
       };
-
     }
 
 
-    /* ==================================================
-       获取手掌展开程度
-       ================================================== */
+    /* =========================================
+       判断手掌展开程度
+       ========================================= */
 
     function getHandOpenRatio(hand) {
 
@@ -375,13 +417,11 @@
 
 
       const fingertips = [
-
         hand[4],
         hand[8],
         hand[12],
         hand[16],
         hand[20]
-
       ];
 
 
@@ -396,7 +436,6 @@
           tip.y - wrist.y
 
         );
-
       }
 
 
@@ -424,13 +463,12 @@
         fingerDistance /
         palmWidth
       );
-
     }
 
 
-    /* ==================================================
-       稳定判断 P1 / P2
-       ================================================== */
+    /* =========================================
+       稳定手势
+       ========================================= */
 
     function updateGesture(
       hand,
@@ -441,26 +479,11 @@
         getHandOpenRatio(hand);
 
 
-      /*
-        张开超过这个值 → P2
-      */
-
       const OPEN_THRESHOLD =
         2.20;
 
-
-      /*
-        聚拢低于这个值 → P1
-      */
-
       const CLOSE_THRESHOLD =
         2.05;
-
-
-      /*
-        连续确认 3 帧，
-        防止人物闪烁
-      */
 
       const CONFIRM_FRAMES =
         3;
@@ -470,9 +493,7 @@
         false;
 
 
-      /* =========================
-         第一只手
-         ========================= */
+      /* 第一只手 */
 
       if (number === 1) {
 
@@ -498,7 +519,6 @@
             hand1Open = true;
 
           }
-
         }
 
 
@@ -520,7 +540,6 @@
             hand1Open = false;
 
           }
-
         }
 
 
@@ -531,14 +550,6 @@
 
         }
 
-
-        /*
-          只有：
-
-          P1 → P2
-
-          才触发烟花
-        */
 
         if (
           previous === false &&
@@ -559,13 +570,10 @@
             changedToOpen
 
         };
-
       }
 
 
-      /* =========================
-         第二只手
-         ========================= */
+      /* 第二只手 */
 
       else {
 
@@ -591,7 +599,6 @@
             hand2Open = true;
 
           }
-
         }
 
 
@@ -613,7 +620,6 @@
             hand2Open = false;
 
           }
-
         }
 
 
@@ -644,15 +650,13 @@
             changedToOpen
 
         };
-
       }
-
     }
 
 
-    /* ==================================================
+    /* =========================================
        人物移动
-       ================================================== */
+       ========================================= */
 
     function moveCharacter(
       character,
@@ -661,23 +665,12 @@
       number
     ) {
 
-      /*
-        数值越小越平滑
-      */
-
       const smooth =
         0.24;
-
-
-      /*
-        小幅度抖动直接忽略
-      */
 
       const deadZone =
         4;
 
-
-      /* 第一只手 */
 
       if (number === 1) {
 
@@ -706,7 +699,6 @@
               lastTarget1Y;
 
           }
-
         }
 
 
@@ -718,13 +710,11 @@
 
 
         hand1X +=
-
           (targetX - hand1X) *
           smooth;
 
 
         hand1Y +=
-
           (targetY - hand1Y) *
           smooth;
 
@@ -737,8 +727,6 @@
 
       }
 
-
-      /* 第二只手 */
 
       else {
 
@@ -767,7 +755,6 @@
               lastTarget2Y;
 
           }
-
         }
 
 
@@ -779,13 +766,11 @@
 
 
         hand2X +=
-
           (targetX - hand2X) *
           smooth;
 
 
         hand2Y +=
-
           (targetY - hand2Y) *
           smooth;
 
@@ -797,13 +782,12 @@
           hand2Y + "px";
 
       }
-
     }
 
 
-    /* ==================================================
+    /* =========================================
        轻量烟花
-       ================================================== */
+       ========================================= */
 
     const particles = [];
 
@@ -820,19 +804,10 @@
     ];
 
 
-    /* ==================================================
-       创建烟花
-       ================================================== */
-
     function createFirework(
       x,
       y
     ) {
-
-      /*
-        保持之前不卡的版本：
-        75 个粒子
-      */
 
       const amount =
         75;
@@ -845,21 +820,18 @@
       ) {
 
         const angle =
-
           Math.random() *
           Math.PI *
           2;
 
 
         const speed =
-
           3 +
           Math.random() *
           9;
 
 
         const color =
-
           colors[
             Math.floor(
               Math.random() *
@@ -871,62 +843,36 @@
         particles.push({
 
           x: x,
-
           y: y,
 
-
           vx:
-
             Math.cos(angle) *
             speed,
 
-
           vy:
-
             Math.sin(angle) *
             speed,
 
-
           size:
-
             2 +
             Math.random() *
             5,
 
-
           life:
             1,
 
-
           decay:
-
             0.014 +
             Math.random() *
             0.018,
-
 
           color:
             color
 
         });
-
       }
-
-      /*
-        注意：
-
-        这里已经没有播放 firework.mp3！
-
-        因为 firework.mp3
-        现在是整首背景音乐。
-      */
-
     }
 
-
-    /* ==================================================
-       烟花动画
-       ================================================== */
 
     function animateFireworks() {
 
@@ -954,34 +900,16 @@
           particles[i];
 
 
-        /* 移动 */
-
-        p.x +=
-          p.vx;
-
-        p.y +=
-          p.vy;
+        p.x += p.vx;
+        p.y += p.vy;
 
 
-        /* 阻力 */
+        p.vx *= 0.985;
+        p.vy *= 0.985;
 
-        p.vx *=
-          0.985;
+        p.vy += 0.08;
 
-        p.vy *=
-          0.985;
-
-
-        /* 一点重力 */
-
-        p.vy +=
-          0.08;
-
-
-        /* 消失 */
-
-        p.life -=
-          p.decay;
+        p.life -= p.decay;
 
 
         if (
@@ -994,25 +922,16 @@
           );
 
           continue;
-
         }
 
 
         ctx.save();
 
-
         ctx.globalAlpha =
           p.life;
 
-
         ctx.fillStyle =
           p.color;
-
-
-        /*
-          小范围发光
-          保持轻量
-        */
 
         ctx.shadowColor =
           p.color;
@@ -1039,25 +958,22 @@
 
         ctx.fill();
 
-
         ctx.restore();
-
       }
 
 
       requestAnimationFrame(
         animateFireworks
       );
-
     }
 
 
     animateFireworks();
 
 
-    /* ==================================================
+    /* =========================================
        MediaPipe
-       ================================================== */
+       ========================================= */
 
     const hands =
       new Hands({
@@ -1071,9 +987,7 @@
               file
 
             );
-
           }
-
       });
 
 
@@ -1094,16 +1008,14 @@
     });
 
 
-    /* ==================================================
-       每一帧手势识别
-       ================================================== */
+    /* =========================================
+       识别结果
+       ========================================= */
 
     hands.onResults(
       (results) => {
 
-
         const detectedHands =
-
           results.multiHandLandmarks
           || [];
 
@@ -1115,8 +1027,6 @@
           "none";
 
 
-        /* 没有检测到手 */
-
         if (
           detectedHands.length === 0
         ) {
@@ -1125,11 +1035,8 @@
             "👋 请把手放进摄像头";
 
           return;
-
         }
 
-
-        /* 最多处理两只手 */
 
         for (
           let i = 0;
@@ -1141,44 +1048,31 @@
           i++
         ) {
 
-
           const hand =
             detectedHands[i];
 
 
           const character =
-
             i === 0
-
               ? character1
-
               : character2;
 
-
-          /* 手掌中心 */
 
           const palm =
             getPalmCenter(hand);
 
 
-          /* 镜像坐标 */
-
           const screenX =
-
             (1 - palm.x) *
             window.innerWidth;
 
 
           const screenY =
-
             palm.y *
             window.innerHeight;
 
 
-          /* 判断手势 */
-
           const gesture =
-
             updateGesture(
               hand,
               i + 1
@@ -1186,16 +1080,13 @@
 
 
           /*
-            手指聚拢 = P1
-            手掌展开 = P2
+            聚拢 = P1
+            展开 = P2
           */
 
           const wantedImage =
-
             gesture.opened
-
               ? "p2.png"
-
               : "p1.png";
 
 
@@ -1211,16 +1102,9 @@
           }
 
 
-          /*
-            P1 / P2 固定大小
-            不进行任何缩放
-          */
-
           character.style.display =
             "block";
 
-
-          /* 人物跟随手掌 */
 
           moveCharacter(
 
@@ -1235,10 +1119,7 @@
 
 
           /*
-            P1 → P2 的瞬间
-            只触发烟花
-
-            不重新播放音乐
+            P1 → P2 时烟花
           */
 
           if (
@@ -1251,13 +1132,9 @@
               screenY
 
             );
-
           }
-
         }
 
-
-        /* 状态提示 */
 
         if (
           detectedHands.length >= 2
@@ -1271,22 +1148,18 @@
         else {
 
           status.innerText =
-
             hand1Open
-
               ? "🎆 手掌展开 · P2"
-
               : "✊ 手指聚拢 · P1";
 
         }
-
       }
     );
 
 
-    /* ==================================================
-       开启摄像头
-       ================================================== */
+    /* =========================================
+       摄像头
+       ========================================= */
 
     const camera =
       new Camera(
@@ -1313,20 +1186,6 @@
 
 
     camera.start();
-
-
-    /* ==================================================
-       浏览器尺寸变化
-       ================================================== */
-
-    window.addEventListener(
-      "resize",
-      () => {
-
-        resizeCanvas();
-
-      }
-    );
 
   </script>
 
